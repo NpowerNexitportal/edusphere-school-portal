@@ -1,0 +1,373 @@
+/* ========================================
+   Exam Management System - Modal Styles
+   ======================================== */
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Modal Content */
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: scale(0.9) translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal-content {
+    transform: scale(1) translateY(0);
+}
+
+.modal-content.large {
+    max-width: 800px;
+}
+
+.modal-content.animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Modal Header */
+.modal-header {
+    padding: 24px 30px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.modal-header h2 {
+    font-size: 24px;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+}
+
+.modal-header h2 i {
+    color: #4f46e5;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+    background: #f3f4f6;
+    color: #1f2937;
+}
+
+/* Modal Body */
+.modal-form {
+    padding: 30px;
+}
+
+/* Form Rows */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.form-group .required {
+    color: #ef4444;
+    margin-left: 4px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="number"],
+.form-group input[type="date"],
+.form-group input[type="time"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 15px;
+    color: #1f2937;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-hint {
+    display: block;
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: 6px;
+}
+
+/* Checkbox Label */
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.checkbox-label span {
+    font-size: 15px;
+    color: #374151;
+}
+
+/* Modal Footer */
+.modal-footer {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+    margin-top: 20px;
+}
+
+/* Buttons */
+.btn-primary,
+.btn-secondary,
+.btn-danger {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: #4f46e5;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #4338ca;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+}
+
+.btn-primary:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-secondary {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.btn-secondary:hover {
+    background: #e5e7eb;
+}
+
+.btn-danger {
+    background: #ef4444;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+/* Page Header (for exam pages) */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.page-header h1 {
+    font-size: 28px;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.page-header h1 i {
+    color: #4f46e5;
+}
+
+/* Responsive Modal */
+@media (max-width: 640px) {
+    .modal-content {
+        width: 95%;
+        max-height: 95vh;
+    }
+
+    .modal-header {
+        padding: 20px;
+    }
+
+    .modal-form {
+        padding: 20px;
+    }
+
+    .modal-footer {
+        flex-direction: column-reverse;
+    }
+
+    .modal-footer button {
+        width: 100%;
+    }
+}
+
+/* Loading Spinner in Buttons */
+.fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Form Validation */
+.form-group input:invalid:not(:placeholder-shown),
+.form-group select:invalid:not(:placeholder-shown) {
+    border-color: #ef4444;
+}
+
+.form-group input:valid:not(:placeholder-shown),
+.form-group select:valid:not(:placeholder-shown) {
+    border-color: #10b981;
+}
+
+/* Success/Error States */
+.form-success {
+    padding: 12px 16px;
+    background: #d1fae5;
+    border-left: 4px solid #10b981;
+    border-radius: 6px;
+    color: #065f46;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-error {
+    padding: 12px 16px;
+    background: #fee2e2;
+    border-left: 4px solid #ef4444;
+    border-radius: 6px;
+    color: #991b1b;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Custom Scrollbar for Modal */
+.modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: #f3f4f6;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}

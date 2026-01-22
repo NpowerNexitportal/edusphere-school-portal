@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Modern School Manager</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-6">
+
+<div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6 space-y-6">
+
+  <h1 class="text-3xl font-bold text-center text-indigo-700">🏫 School Management System</h1>
+
+  <!-- Add Student Form -->
+  <div class="border p-4 rounded-lg bg-blue-50">
+    <h2 class="text-xl font-semibold mb-3 text-gray-800">➕ Add New Student</h2>
+    <input 
+      type="text" 
+      id="studentName" 
+      placeholder="Full Name"
+      class="w-full px-4 py-2 mb-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    />
+    <input 
+      type="number" 
+      id="studentAge" 
+      placeholder="Age"
+      class="w-full px-4 py-2 mb-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    />
+    <button 
+      onclick="addStudent()" 
+      class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md transition duration-200"
+    >
+      Add Student
+    </button>
+  </div>
+
+  <!-- Students List Table -->
+  <div class="overflow-x-auto">
+    <h2 class="text-xl font-semibold mb-3 text-gray-800">👥 All Students</h2>
+    <table class="min-w-full bg-white border border-gray-200 rounded-md shadow-sm">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="py-2 px-4 border-b text-left">#</th>
+          <th class="py-2 px-4 border-b text-left">Name</th>
+          <th class="py-2 px-4 border-b text-left">Age</th>
+          <th class="py-2 px-4 border-b text-left">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="studentsBody" class="divide-y divide-gray-200"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  let students = JSON.parse(localStorage.getItem("students")) || [];
+
+  function renderStudents() {
+    const tbody = document.getElementById("studentsBody");
+    tbody.innerHTML = "";
+
+    students.forEach((student, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td class="py-2 px-4 border-b">${index + 1}</td>
+        <td class="py-2 px-4 border-b">${student.name}</td>
+        <td class="py-2 px-4 border-b">${student.age}</td>
+        <td class="py-2 px-4 border-b">
+          <button onclick="deleteStudent(${index})" class="text-red-600 hover:text-red-800 font-medium">
+            ❌ Delete
+          </button>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+  }
+
+  function addStudent() {
+    const nameInput = document.getElementById("studentName");
+    const ageInput = document.getElementById("studentAge");
+
+    if (!nameInput.value.trim() || !ageInput.value) {
+      alert("Please enter valid details.");
+      return;
+    }
+
+    const newStudent = {
+      name: nameInput.value.trim(),
+      age: parseInt(ageInput.value)
+    };
+
+    students.push(newStudent);
+    localStorage.setItem("students", JSON.stringify(students));
+    renderStudents();
+
+    // Clear inputs
+    nameInput.value = "";
+    ageInput.value = "";
+  }
+
+  function deleteStudent(index) {
+    students.splice(index, 1);
+    localStorage.setItem("students", JSON.stringify(students));
+    renderStudents();
+  }
+
+  window.onload = () => renderStudents();
+</script>
+
+</body>
+</html>

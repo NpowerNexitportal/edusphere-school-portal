@@ -1,0 +1,113 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: edusphere-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: edusphere
+      POSTGRES_PASSWORD: edusphere123
+      POSTGRES_DB: edusphere
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - edusphere-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U edusphere"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: edusphere-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - edusphere-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: edusphere-api
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://edusphere:edusphere123@postgres:5432/edusphere
+      REDIS_URL: redis://redis:6379
+      PORT: 5000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./src:/app/src
+      - ./logs:/app/logs
+      - ./uploads:/app/uploads
+    networks:
+      - edusphere-network
+    command: npm run dev
+
+  # pgAdmin (Database Management UI)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: edusphere-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@edusphere.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - edusphere-network
+    depends_on:
+      - postgres
+
+  # Redis Commander (Redis Management UI)
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: edusphere-redis-commander
+    restart: unless-stopped
+    environment:
+      REDIS_HOSTS: local:redis:6379
+    ports:
+      - "8081:8081"
+    networks:
+      - edusphere-network
+    depends_on:
+      - redis
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+
+networks:
+  edusphere-network:
+    driver: bridge

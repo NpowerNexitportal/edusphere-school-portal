@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIN Generator - EduSphere</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #4f46e5;
+            font-size: 32px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: 'Courier New', monospace;
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .form-hint {
+            font-size: 13px;
+            color: #6b7280;
+            margin-top: 8px;
+        }
+
+        .btn {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4338ca;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 25px;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .results-table th,
+        .results-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .results-table th {
+            background: #f9fafb;
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        .results-table tr:hover {
+            background: #f9fafb;
+        }
+
+        .pin-code {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            color: #4f46e5;
+            font-size: 16px;
+        }
+
+        .alert {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .alert.show {
+            display: flex;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #10b981;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid #ef4444;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        #resultsSection {
+            display: none;
+        }
+
+        #resultsSection.show {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-key"></i> Result PIN Generator</h1>
+            <p style="color: #6b7280; font-size: 16px;">Generate PINs for students to check their exam results</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-value" id="totalPins">0</div>
+                <div class="stat-label">PINs Generated</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="maxUsage">5</div>
+                <div class="stat-label">Checks Per PIN</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">30</div>
+                <div class="stat-label">Days Valid</div>
+            </div>
+        </div>
+
+        <!-- Generator Form -->
+        <div class="card">
+            <div id="alertContainer"></div>
+
+            <h2 style="margin-bottom: 20px; color: #1f2937;">Generate Multiple PINs</h2>
+
+            <div class="form-group">
+                <label><i class="fas fa-users"></i> Student IDs (One per line)</label>
+                <textarea id="studentIds" placeholder="STU001
+STU002
+STU003
+STU004
+STU005"></textarea>
+                <span class="form-hint">Enter one Student ID per line. Each student will get a unique PIN.</span>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-sync-alt"></i> Maximum Usage Count</label>
+                <input type="number" id="maxUsageCount" value="5" min="1" max="20">
+                <span class="form-hint">How many times can each PIN be used? (Default: 5)</span>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" id="generateBtn" onclick="generatePins()">
+                    <i class="fas fa-magic"></i> Generate PINs
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="card" id="resultsSection">
+            <h2 style="margin-bottom: 20px; color: #1f2937;">Generated PINs</h2>
+
+            <div class="button-group" style="margin-bottom: 20px;">
+                <button class="btn btn-success" onclick="downloadCSV()">
+                    <i class="fas fa-download"></i> Download CSV
+                </button>
+                <button class="btn btn-success" onclick="copyToClipboard()">
+                    <i class="fas fa-copy"></i> Copy All
+                </button>
+                <button class="btn btn-primary" onclick="printPins()">
+                    <i class="fas fa-print"></i> Print PINs
+                </button>
+            </div>
+
+            <table class="results-table" id="pinsTable">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Student ID</th>
+                        <th>PIN Code</th>
+                        <th>Max Uses</th>
+                        <th>Valid Until</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="pinsTableBody">
+                    <!-- PINs will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api/v1';
+        let generatedPins = [];
+
+        async function generatePins() {
+            const studentIdsText = document.getElementById('studentIds').value.trim();
+            const maxUsageCount = parseInt(document.getElementById('maxUsageCount').value);
+
+            if (!studentIdsText) {
+                showAlert('Please enter at least one Student ID', 'error');
+                return;
+            }
+
+            // Split by newlines and clean up
+            const studentIds = studentIdsText.split('\n')
+                .map(id => id.trim())
+                .filter(id => id.length > 0);
+
+            if (studentIds.length === 0) {
+                showAlert('Please enter valid Student IDs', 'error');
+                return;
+            }
+
+            const generateBtn = document.getElementById('generateBtn');
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+
+            try {
+                const response = await fetch(`${API_URL}/pins/bulk-generate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        student_ids: studentIds,
+                        max_usage_count: maxUsageCount
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    generatedPins = result.data;
+                    displayPins(result.data);
+                    showAlert(`Successfully generated ${result.data.length} PINs!`, 'success');
+                    document.getElementById('totalPins').textContent = result.data.length;
+                    document.getElementById('maxUsage').textContent = maxUsageCount;
+                } else {
+                    showAlert(result.message || 'Failed to generate PINs', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Network error. Make sure the server is running!', 'error');
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = '<i class="fas fa-magic"></i> Generate PINs';
+            }
+        }
+
+        function displayPins(pins) {
+            const tbody = document.getElementById('pinsTableBody');
+            tbody.innerHTML = pins.map((pin, index) => `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td><strong>${pin.student_id}</strong></td>
+                    <td><span class="pin-code">${pin.pin_code}</span></td>
+                    <td>${pin.max_usage_count}</td>
+                    <td>${new Date(pin.valid_until).toLocaleDateString()}</td>
+                    <td><span style="color: #10b981; font-weight: 600;">Active</span></td>
+                </tr>
+            `).join('');
+
+            document.getElementById('resultsSection').classList.add('show');
+        }
+
+        function downloadCSV() {
+            if (generatedPins.length === 0) {
+                showAlert('No PINs to download', 'error');
+                return;
+            }
+
+            const csv = [
+                ['Student ID', 'PIN Code', 'Max Uses', 'Valid Until', 'Status'],
+                ...generatedPins.map(pin => [
+                    pin.student_id,
+                    pin.pin_code,
+                    pin.max_usage_count,
+                    new Date(pin.valid_until).toLocaleDateString(),
+                    'Active'
+                ])
+            ].map(row => row.join(',')).join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `result-pins-${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showAlert('PINs downloaded successfully!', 'success');
+        }
+
+        function copyToClipboard() {
+            if (generatedPins.length === 0) {
+                showAlert('No PINs to copy', 'error');
+                return;
+            }
+
+            const text = generatedPins.map(pin =>
+                `${pin.student_id}: ${pin.pin_code}`
+            ).join('\n');
+
+            navigator.clipboard.writeText(text).then(() => {
+                showAlert('PINs copied to clipboard!', 'success');
+            }).catch(err => {
+                showAlert('Failed to copy PINs', 'error');
+            });
+        }
+
+        function printPins() {
+            window.print();
+        }
+
+        function showAlert(message, type) {
+            const container = document.getElementById('alertContainer');
+            const alertClass = type === 'error' ? 'alert-error' : 'alert-success';
+            const icon = type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle';
+
+            container.innerHTML = `
+                <div class="alert ${alertClass} show">
+                    <i class="fas ${icon}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+
+            setTimeout(() => {
+                const alert = container.querySelector('.alert');
+                if (alert) alert.classList.remove('show');
+            }, 5000);
+        }
+    </script>
+</body>
+
+</html>

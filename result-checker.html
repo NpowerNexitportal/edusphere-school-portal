@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Your Result - EduSphere</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #4f46e5;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --bg-light: #f9fafb;
+            --border: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: var(--primary);
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: var(--text-light);
+            font-size: 16px;
+        }
+
+        /* Result Checker Form */
+        .checker-card {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .form-hint {
+            display: block;
+            font-size: 13px;
+            color: var(--text-light);
+            margin-top: 6px;
+        }
+
+        .btn-check {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-check:hover {
+            background: #4338ca;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-check:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Result Display */
+        .result-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            display: none;
+        }
+
+        .result-card.show {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-header {
+            background: linear-gradient(135deg, var(--primary) 0%, #7c3aed 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .result-header h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .result-header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .student-info {
+            padding: 30px;
+            background: var(--bg-light);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-size: 13px;
+            color: var(--text-light);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .info-value {
+            font-size: 18px;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .results-table {
+            padding: 30px;
+        }
+
+        .results-table h3 {
+            font-size: 20px;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead tr {
+            background: var(--bg-light);
+        }
+
+        th,
+        td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            color: var(--text-light);
+            font-size: 15px;
+        }
+
+        .grade-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .grade-A\+,
+        .grade-A {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .grade-B\+,
+        .grade-B {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .grade-C\+,
+        .grade-C {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .grade-F {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .summary-section {
+            padding: 30px;
+            background: var(--bg-light);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .summary-card .label {
+            font-size: 13px;
+            color: var(--text-light);
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .summary-card .value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .summary-card .value.grade {
+            color: var(--primary);
+        }
+
+        .summary-card .value.percentage {
+            color: var(--success);
+        }
+
+        .action-buttons {
+            padding: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-print {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-print:hover {
+            background: #4338ca;
+            transform: translateY(-2px);
+        }
+
+        .btn-download {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-download:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .btn-reset {
+            background: var(--text-light);
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #4b5563;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .alert.show {
+            display: flex;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid var(--danger);
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            color: #1e40af;
+            border-left: 4px solid var(--primary);
+        }
+
+        /* PIN Usage Info */
+        .pin-usage {
+            background: #fef3c7;
+            border-left: 4px solid var(--warning);
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .pin-usage i {
+            color: var(--warning);
+            font-size: 20px;
+        }
+
+        .pin-usage-text {
+            flex: 1;
+            color: #78350f;
+            font-weight: 500;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .checker-card,
+            .action-buttons,
+            .header {
+                display: none !important;
+            }
+
+            .result-card {
+                box-shadow: none;
+                break-inside: avoid;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .checker-card {
+                padding: 24px;
+            }
+
+            .student-info,
+            .summary-section {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-graduation-cap"></i> EduSphere Result Checker</h1>
+            <p>Enter your details below to check your examination results</p>
+        </div>
+
+        <!-- Result Checker Form -->
+        <div class="checker-card" id="checkerForm">
+            <form id="resultForm" onsubmit="checkResult(event)">
+                <div id="alertContainer"></div>
+
+                <div class="form-group">
+                    <label for="studentId">
+                        <i class="fas fa-id-card"></i> Student ID / Exam Number
+                    </label>
+                    <input type="text" id="studentId" placeholder="e.g., STU001" required pattern="[A-Za-z0-9]+">
+                    <span class="form-hint">Enter your unique student identification number</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="pinCode">
+                        <i class="fas fa-key"></i> Result PIN
+                    </label>
+                    <input type="text" id="pinCode" placeholder="e.g., PIN-2026-1234" required>
+                    <span class="form-hint">Your secure PIN for result checking (case-sensitive)</span>
+                </div>
+
+                <button type="submit" class="btn-check" id="checkBtn">
+                    <i class="fas fa-search"></i> Check Result
+                </button>
+            </form>
+        </div>
+
+        <!-- Result Display (Hidden by default) -->
+        <div class="result-card" id="resultDisplay">
+            <!-- Result Header -->
+            <div class="result-header">
+                <h2>Examination Result</h2>
+                <p id="examDetails">---</p>
+            </div>
+
+            <!-- Student Information -->
+            <div class="student-info">
+                <div class="info-item">
+                    <span class="info-label">Student Name</span>
+                    <span class="info-value" id="studentName">---</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Student ID</span>
+                    <span class="info-value" id="displayStudentId">---</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Class</span>
+                    <span class="info-value" id="studentClass">---</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Roll Number</span>
+                    <span class="info-value" id="rollNumber">---</span>
+                </div>
+            </div>
+
+            <!-- Results Table -->
+            <div class="results-table">
+                <h3><i class="fas fa-chart-bar"></i> Examination Results</h3>
+                <table id="resultsTableBody">
+                    <thead>
+                        <tr>
+                            <th>Exam</th>
+                            <th>Subject</th>
+                            <th>Marks Obtained</th>
+                            <th>Total Marks</th>
+                            <th>Percentage</th>
+                            <th>Grade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Results will be inserted here -->
+                    </tbody>
+                </table>
+
+                <div id="remarksSection" style="margin-top: 20px; display: none;">
+                    <h4 style="color: var(--text-dark); margin-bottom: 10px;">
+                        <i class="fas fa-comment-alt"></i> Remarks
+                    </h4>
+                    <p id="remarksText" style="color: var(--text-light); line-height: 1.6;"></p>
+                </div>
+            </div>
+
+            <!-- Summary Section -->
+            <div class="summary-section">
+                <div class="summary-card">
+                    <div class="label">Overall Grade</div>
+                    <div class="value grade" id="overallGrade">---</div>
+                </div>
+                <div class="summary-card">
+                    <div class="label">Total Percentage</div>
+                    <div class="value percentage" id="overallPercentage">---</div>
+                </div>
+                <div class="summary-card">
+                    <div class="label">Total Marks</div>
+                    <div class="value" id="totalMarks">---</div>
+                </div>
+            </div>
+
+            <!-- PIN Usage Info -->
+            <div class="pin-usage">
+                <i class="fas fa-info-circle"></i>
+                <span class="pin-usage-text" id="pinUsageInfo">---</span>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="btn btn-print" onclick="printResult()">
+                    <i class="fas fa-print"></i> Print Result
+                </button>
+                <button class="btn btn-download" onclick="downloadPDF()">
+                    <i class="fas fa-download"></i> Download PDF
+                </button>
+                <button class="btn btn-reset" onclick="resetForm()">
+                    <i class="fas fa-redo"></i> Check Another
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api/v1';
+
+        // Show Alert
+        function showAlert(message, type = 'error') {
+            const container = document.getElementById('alertContainer');
+            const alertClass = type === 'error' ? 'alert-error' : 'alert-info';
+            const icon = type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
+
+            container.innerHTML = `
+                <div class="alert ${alertClass} show">
+                    <i class="fas ${icon}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+
+            setTimeout(() => {
+                const alert = container.querySelector('.alert');
+                if (alert) alert.classList.remove('show');
+            }, 5000);
+        }
+
+        // Check Result
+        async function checkResult(event) {
+            event.preventDefault();
+
+            const studentId = document.getElementById('studentId').value.trim();
+            const pinCode = document.getElementById('pinCode').value.trim();
+            const checkBtn = document.getElementById('checkBtn');
+
+            // Show loading state
+            checkBtn.disabled = true;
+            checkBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
+
+            try {
+                const response = await fetch(`${API_URL}/results/check`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        student_id: studentId,
+                        pin_code: pinCode
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    showAlert(result.message, 'error');
+                    checkBtn.disabled = false;
+                    checkBtn.innerHTML = '<i class="fas fa-search"></i> Check Result';
+                    return;
+                }
+
+                // Display result
+                displayResult(result.data);
+
+            } catch (error) {
+                console.error('Error checking result:', error);
+                showAlert('Network error. Please check your connection and try again.', 'error');
+                checkBtn.disabled = false;
+                checkBtn.innerHTML = '<i class="fas fa-search"></i> Check Result';
+            }
+        }
+
+        // Display Result
+        function displayResult(data) {
+            const { student, results, pin_info } = data;
+
+            // Hide form, show result
+            document.getElementById('checkerForm').style.display = 'none';
+            document.getElementById('resultDisplay').classList.add('show');
+
+            // Populate student info
+            document.getElementById('studentName').textContent =
+                `${student.first_name} ${student.last_name}`;
+            document.getElementById('displayStudentId').textContent = student.student_id;
+            document.getElementById('studentClass').textContent = student.class_name || 'N/A';
+            document.getElementById('rollNumber').textContent = student.roll_number || 'N/A';
+
+            // Populate results table
+            const tbody = document.querySelector('#resultsTableBody tbody');
+            tbody.innerHTML = '';
+
+            let totalMarksObtained = 0;
+            let totalPossibleMarks = 0;
+
+            results.forEach(result => {
+                totalMarksObtained += result.marks_obtained;
+                totalPossibleMarks += result.total_marks;
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${result.exam_details?.exam_name || 'Unknown Exam'}</td>
+                    <td>${result.exam_details?.subject || 'N/A'}</td>
+                    <td>${result.marks_obtained}</td>
+                    <td>${result.total_marks}</td>
+                    <td>${result.percentage.toFixed(2)}%</td>
+                    <td><span class="grade-badge grade-${result.grade}">${result.grade}</span></td>
+                `;
+                tbody.appendChild(row);
+
+                // Show exam details in header
+                document.getElementById('examDetails').textContent =
+                    `${result.exam_details?.exam_name} - ${result.exam_details?.class_name} - ${result.exam_details?.term || 'Term'} ${result.exam_details?.academic_year || ''}`;
+
+                // Show remarks if available
+                if (result.remarks) {
+                    document.getElementById('remarksSection').style.display = 'block';
+                    document.getElementById('remarksText').textContent = result.remarks;
+                }
+            });
+
+            // Calculate overall percentage
+            const overallPercentage = (totalMarksObtained / totalPossibleMarks) * 100;
+            const overallGrade = calculateGrade(overallPercentage);
+
+            // Populate summary
+            document.getElementById('overallGrade').textContent = overallGrade;
+            document.getElementById('overallPercentage').textContent = overallPercentage.toFixed(2) + '%';
+            document.getElementById('totalMarks').textContent = `${totalMarksObtained} / ${totalPossibleMarks}`;
+
+            // Show PIN usage info
+            document.getElementById('pinUsageInfo').textContent =
+                `You have ${pin_info.remaining_checks} check(s) remaining with this PIN.`;
+        }
+
+        // Calculate Grade
+        function calculateGrade(percentage) {
+            if (percentage >= 90) return 'A+';
+            if (percentage >= 80) return 'A';
+            if (percentage >= 70) return 'B+';
+            if (percentage >= 60) return 'B';
+            if (percentage >= 50) return 'C+';
+            if (percentage >= 40) return 'C';
+            return 'F';
+        }
+
+        // Print Result
+        function printResult() {
+            window.print();
+        }
+
+        // Download PDF
+        function downloadPDF() {
+            alert('PDF download feature coming soon!\n\nFor now, please use the Print button and select "Save as PDF" from your printer options.');
+        }
+
+        // Reset Form
+        function resetForm() {
+            document.getElementById('checkerForm').style.display = 'block';
+            document.getElementById('resultDisplay').classList.remove('show');
+            document.getElementById('resultForm').reset();
+            document.getElementById('alertContainer').innerHTML = '';
+
+            const checkBtn = document.getElementById('checkBtn');
+            checkBtn.disabled = false;
+            checkBtn.innerHTML = '<i class="fas fa-search"></i> Check Result';
+        }
+    </script>
+</body>
+
+</html>
